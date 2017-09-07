@@ -1,43 +1,60 @@
-lua-vk-api
+lvk v1.0
 =========
-Lua wrapper-functions for [REST API methods](https://vk.com/dev/methods) of [vk.com](https://vk.com). Implementation for 5.40 version of API.
+
+[![Join the chat at https://gitter.im/flvk-chat/Lobby](https://badges.gitter.im/flvk-chat/Lobby.svg)](https://gitter.im/flvk-chat/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+[![release](https://img.shields.io/badge/release-lvk--1.0-brightgreen.svg?style=flat)](https://github.com/last-khajiit/lvk/releases/latest) [![Build Status](https://travis-ci.org/last-khajiit/lvk.svg?branch=master)](https://travis-ci.org/last-khajiit/lvk) [![Available through Luarocks https://luarocks.org/modules/lastkhajiit/lvk](https://img.shields.io/badge/luarocks-1.0--2-brightgreen.svg)](https://luarocks.org/modules/lastkhajiit/lvk) [![Join the chat at https://gitter.im/lvk-chat/Lobby](https://badges.gitter.im/lvk-chat/Lobby.svg)](https://gitter.im/lvk-chat/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+Lua library for integration with [REST API](https://vk.com/dev/methods) of [vk.com](https://vk.com). Implementation for 5.62 API version.
+
+Compatible with Lua 5.2 and higher.
 
 ### Usage
-
-Set up your *accessToken* in *luaVkApi.properties*, for instance:
+Install lvk using [Luarocks](https://luarocks.org/):
 ```
-accessToken=ee272c9214611c082d397def7da4368d2baa5d1805aa3dcbb989a2e52bf0cec8c69da547b5d54b524da56
-```
-and add luaVkApi to your code:
-```lua
-local luaVkApi = require "luaVkApi";
+luarocks install lvk
 ```
 
-Now you can invoke all VK REST API methods, for examplpe:
+Add lvk to your code:
 ```lua
-print(luaVkApi.getStatus()) --print current user status
+local Lvk = require "lvk"
+```
+
+Create instance of the lvk using a constructor and passing there your secret token and version as parameters:
+```lua
+local secretKey = "ee272c9214611c082d397def7da4368d2baa5d1805aa3dcbb989a2e52bf0cec8c69da547b5d54b524da56"
+local api = Lvk:new(secretKey, "5.62")
+```
+
+Now you can invoke all REST methods of vk.com, for example:
+```lua
+print(api:getStatus()) --print current user status
 
 local userId = "201838325"
-print(luaVkApi.getStatus(userId)) --print user status for mentioned user
+print(api:getStatus(userId)) --print user status for mentioned user
 ```
-Response is usual string, but you can use _stringToJSON_ method for comverting to table:
+
+The response is usual string, but you can use _toTable_ method to convert it to Lua table:
 ```lua
-statusStr = luaVkApi.getStatus()
-status = luaVkApi.stringToJSON(statusStr)
-print(status.response.text)
+local responce = api:getStatus()
+local responceTable = api:toTable(responce) --cast raw responce to Lua table
+print(responceTable.response.text)
 ```
 
-### Required packages
+If you want to see version of lvk library and version of vk.com API you can use _getVersion_ and _getVkApiVersion_ methods:
+```lua
+print(api:getVersion()) --return 1.0 version
+print(api:getVkApiVersion()) --return version which you use in lvk constructor
+```
 
-- ssl.https: https://github.com/brunoos/luasec/blob/master/src/https.lua
-- dkjson: https://github.com/LuaDist/dkjson
+### Luarocks dependencies
 
-*Feel free to make pull requests!*
-
+- [luasec](https://luarocks.org/modules/brunoos/luasec)
+- [dkjson](https://luarocks.org/modules/dhkolf/dkjson)
 
 ---
 
-**Copyright © 2016 Last Khajiit <last.khajiit@gmail.com>**
+**Copyright © 2017 Khajiit <last.khajiit@gmail.com>**
 
 This work is free. You can redistribute it and/or modify it under the
 terms of the Do What The Fuck You Want To Public License, Version 2,
